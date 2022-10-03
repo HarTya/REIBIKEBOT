@@ -3,11 +3,18 @@ const TelegramApi = require('node-telegram-bot-api');
 const fetch = require('cross-fetch');
 
 const bot = new TelegramApi(process.env.TOKEN, {polling: true});
+const webAppUrl = 'https://reibike.vercel.app/';
 
 async function sendMessage(chatId, text, user) {
     try {
         if (String(text).includes('/start')) {
-            return bot.sendMessage(chatId, `🖐 Вітаємо! Опишіть проблему у повідомленні`)
+            return bot.sendMessage(chatId, `🖐 Вітаємо! Опишіть проблему у повідомленні`, {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{text: 'Наш сайт', web_app: {url: webAppUrl}}]
+                    ]
+                }
+            })
         }
 
         if (String(text).length < 15) {
@@ -26,7 +33,7 @@ async function sendMessage(chatId, text, user) {
 
         return bot.sendMessage(chatId, `✅ Ваше повідомлення «${String(text).trim()}» було надіслано, ми розглянемо його та зв'яжемося з вами, якщо це потрібно`)
     } catch (err) {
-        bot.sendMessage(chatId, `❗Помилка ❯ ${err}`)
+        return bot.sendMessage(chatId, `❗Помилка ❯ ${err}`)
     }
 }
 
